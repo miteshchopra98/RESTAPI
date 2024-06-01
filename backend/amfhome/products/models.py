@@ -9,3 +9,10 @@ class Products(models.Model):
 
     def __str__(self):
         return str((self.title, self.content, self.price))
+
+    @property
+    def sale_price(self):
+        return '%.2f' %(float(self.price) * 0.8)
+
+    def get_discount(self):
+        return 150

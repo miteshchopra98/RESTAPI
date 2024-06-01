@@ -4,7 +4,10 @@ from rest_framework.response import Response
 import json
 from products.models import *
 from django.forms.models import model_to_dict
+from rest_framework.decorators import api_view
+from products.serializers import ProductSerializer
 
+# -----------------------------------------------------------------------------------------------------
 
 # Create your views here.
 
@@ -28,14 +31,32 @@ from django.forms.models import model_to_dict
 #     return JsonResponse({"message": "Hi there, this is your Django API response"})
 
 
-def api_home(request, *args, **kwargs):
-    model_data = Products.objects.all().order_by("?").first()
-    data ={}
-    if model_data:
-        # data['id'] = model_data.id
-        # data['title'] = model_data.title
-        # data['content'] = model_data.content
-        # data['price'] = model_data.price
-        data = model_to_dict(model_data)
-    return JsonResponse(data)
+# -----------------------------------------------------------------------------------------------------
 
+
+
+# @api_view(['GET'])
+# def api_home(request, *args, **kwargs):
+#     instance = Products.objects.all()
+#     data ={}
+#     if instance:
+#         # data['id'] = model_data.id
+#         # data['title'] = model_data.title
+#         # data['content'] = model_data.content
+#         # data['price'] = model_data.price
+#         #data = model_to_dict(instance)
+#         data_ser  = ProductSerializer(instance, many=True).data
+#     return Response(data_ser)
+
+# -----------------------------------------------------------------------------------------------------
+
+
+@api_view(['POST'])
+def api_home(request, *args, **kwargs):
+    print(request.data)
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    
+    return Response({'invalid':'not a valid data'})
